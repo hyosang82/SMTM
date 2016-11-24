@@ -7,12 +7,20 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs += [rootProject.projectDir.parentFile.absolutePath + "/common/java"]
+
+        }
+    }
+}
+
 dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.google.firebase:firebase-server-sdk:[3.0.0,)'
 
     compile project(':hscommon')
-    compile project(':smtm-common')
 
     compile fileTree(include: '*.jar', dir: 'libs')
 

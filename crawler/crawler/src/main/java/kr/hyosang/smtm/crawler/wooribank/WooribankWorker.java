@@ -3,6 +3,7 @@ package kr.hyosang.smtm.crawler.wooribank;
 import com.google.firebase.database.*;
 import com.google.gson.Gson;
 import kr.hyosang.smtm.common.Atm;
+import kr.hyosang.smtm.common.BankInfo;
 import kr.hyosang.smtm.common.define.BankCode;
 import kr.hyosang.smtm.crawler.WorkerBase;
 import kr.hyosang.webclient.HsWebClient;
@@ -23,7 +24,9 @@ public class WooribankWorker extends WorkerBase {
         webClient.setRequestMethod("POST");
 
         try {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("atm");
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+            DatabaseReference ref = db.getReference("atm/" + BankCode.WOORIBANK);
 
             int page = 0;
             int pageItemCount;
@@ -119,5 +122,10 @@ public class WooribankWorker extends WorkerBase {
     @Override
     protected String getTag() {
         return "WOORI";
+    }
+
+    @Override
+    protected BankInfo getBankInfo() {
+        return new BankInfo(BankCode.WOORIBANK, "우리은행");
     }
 }

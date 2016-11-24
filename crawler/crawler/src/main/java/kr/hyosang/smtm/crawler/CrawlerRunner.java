@@ -2,6 +2,9 @@ package kr.hyosang.smtm.crawler;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import kr.hyosang.smtm.common.BankInfo;
 import kr.hyosang.smtm.crawler.kb.KbWorker;
 import kr.hyosang.smtm.crawler.wooribank.WooribankWorker;
 
@@ -23,18 +26,24 @@ public class CrawlerRunner extends Thread {
         FirebaseApp.initializeApp(options);
 
         try {
-            List<Thread> workers = new ArrayList<>();
+            List<WorkerBase> workers = new ArrayList<>();
             workers.add(new KbWorker());
             workers.add(new WooribankWorker());
 
             int runningThread;
 
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("bank");
+            BankInfo bankInfo;
+
             do {
                 runningThread = 0;
 
-                for(Thread t : workers) {
+                for(WorkerBase t : workers) {
                     switch(t.getState()) {
                         case NEW:
+                            bankInfo = t.getBankInfo();
+                            ref.child(bankInfo.code).setValue(bankInfo.asMap());
+
                             t.start();
                             runningThread++;
                             break;

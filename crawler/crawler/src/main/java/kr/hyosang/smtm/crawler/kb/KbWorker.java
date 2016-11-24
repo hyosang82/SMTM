@@ -3,6 +3,7 @@ package kr.hyosang.smtm.crawler.kb;
 import com.google.firebase.database.*;
 import com.google.gson.Gson;
 import kr.hyosang.smtm.common.Atm;
+import kr.hyosang.smtm.common.BankInfo;
 import kr.hyosang.smtm.common.define.BankCode;
 import kr.hyosang.smtm.crawler.WorkerBase;
 import kr.hyosang.smtm.crawler.wooribank.BranchInfo;
@@ -28,7 +29,7 @@ public class KbWorker extends WorkerBase {
         Gson gson = new Gson();
 
         try {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("atm");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("atm/" + BankCode.KB);
 
             int page = 0;
             int pageItemCount;
@@ -89,7 +90,7 @@ public class KbWorker extends WorkerBase {
 
                 totalCount += pageItemCount;
 
-                if(page > 2) break;
+                if(page > 5) break;
             }while(pageItemCount > 0);
 
             log("Total found: " + totalCount);
@@ -122,5 +123,10 @@ public class KbWorker extends WorkerBase {
     @Override
     protected String getTag() {
         return "KB";
+    }
+
+    @Override
+    protected BankInfo getBankInfo() {
+        return new BankInfo(BankCode.KB, "KB");
     }
 }

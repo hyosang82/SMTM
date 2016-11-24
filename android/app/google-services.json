@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "508368158433",
+    "firebase_url": "https://smtm-13000.firebaseio.com",
+    "project_id": "smtm-13000",
+    "storage_bucket": "smtm-13000.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508368158433:android:fbf4e90feb563be8",
+        "android_client_info": {
+          "package_name": "kr.hyosang.smtm.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "508368158433-66hiulsu1ge52novfk8ci9o7k0b0mpct.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7Mt7mUq-yTyK-a4b83RUb99jbp_ZZ8yQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

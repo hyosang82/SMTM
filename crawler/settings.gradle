@@ -1,0 +1,5 @@
+rootProject.name = 'SMTM'
+include 'hscommon'
+include 'smtm-common'
+include 'crawler'
+

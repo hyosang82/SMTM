@@ -1,0 +1,27 @@
+group 'kr.hyosang'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+jar.doFirst {
+    manifest {
+        attributes(
+                "Implementation-Version": version,
+                "Main-Class": "Main",
+                "Class-Path": configurations.compile.collect { it.getAbsolutePath() }.join(' ')
+        )
+    }
+}
+
+jar.doLast {
+    println archivePath
+}
+
+dependencies {
+    compile project(':crawler')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

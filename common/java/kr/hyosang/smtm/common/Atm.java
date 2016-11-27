@@ -1,5 +1,6 @@
 package kr.hyosang.smtm.common;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 /**

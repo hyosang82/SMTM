@@ -79,8 +79,6 @@ public class WooribankWorker extends WorkerBase {
                     String branchCode = listMatcher.group(1);
                     String cornerCode = listMatcher.group(2);
 
-                    id = String.format("%s%s_%s", BankCode.WOORIBANK, branchCode, cornerCode);
-
                     pageItemCount++;
 
                     infoParam.put("brCode", branchCode);
@@ -102,7 +100,7 @@ public class WooribankWorker extends WorkerBase {
 
                     log("ATM: " + atm.toString());
 
-                    ref.child(id).setValue(atm);
+                    insertOrUpdate(ref, atm);
                 }
 
                 log("Page found : " + pageItemCount);
@@ -127,5 +125,10 @@ public class WooribankWorker extends WorkerBase {
     @Override
     protected BankInfo getBankInfo() {
         return new BankInfo(BankCode.WOORIBANK, "우리은행");
+    }
+
+    @Override
+    protected String getIndexKey(Atm item) {
+        return String.format("%s%s_%s", item.bankCode, item.branchCode, item.cornerCode);
     }
 }

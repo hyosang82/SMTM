@@ -76,9 +76,7 @@ public class KbWorker extends WorkerBase {
                         Atm atm =  item.toAtm();
                         parseOpentime(time, atm);
 
-                        String key = String.format("%s_%s", BankCode.KB, atm.cornerCode);
-
-                        ref.child(key).setValue(atm);
+                        insertOrUpdate(ref, atm);
 
                         log("ATM: " + atm.toString());
 
@@ -128,5 +126,10 @@ public class KbWorker extends WorkerBase {
     @Override
     protected BankInfo getBankInfo() {
         return new BankInfo(BankCode.KB, "KB");
+    }
+
+    @Override
+    protected String getIndexKey(Atm item) {
+        return String.format("%s_%s", item.bankCode, item.cornerCode);
     }
 }

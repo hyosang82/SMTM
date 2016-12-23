@@ -10,6 +10,11 @@ public class BankInfo {
     public String code;
     public String name;
 
+    public BankInfo() {
+        code = "";
+        name = "";
+    }
+
     public BankInfo(String code, String name) {
         this.code = code;
         this.name = name;

@@ -1,18 +1,16 @@
 package kr.hyosang.smtm.android;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPointBounds;
@@ -20,6 +18,7 @@ import net.daum.mf.map.api.MapView;
 
 import java.util.List;
 
+import kr.hyosang.smtm.android.common.Logger;
 import kr.hyosang.smtm.android.database.DatabaseManager;
 import kr.hyosang.smtm.common.Atm;
 import kr.hyosang.smtm.common.BankInfo;
@@ -28,6 +27,7 @@ import kr.hyosang.smtm.common.Util;
 public class MainActivity extends Activity {
     private MapView mapView = null;
     private MapPOIItem [] atmPois = null;
+    private List<Atm> mCurrentAtmList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,31 @@ public class MainActivity extends Activity {
         MapPoint pt = MapPoint.mapPointWithGeoCoord(37.541889f, 127.095388f);
 
         mapView.setMapViewEventListener(mapViewEventListener);
+        mapView.setPOIItemEventListener(new MapView.POIItemEventListener() {
+            @Override
+            public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+                Logger.d("SELECTED");
+
+            }
+
+            @Override
+            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+                Toast.makeText(MainActivity.this, "Balloon:" + mapPOIItem.getTag(), Toast.LENGTH_SHORT).show();
+                Logger.d("1111111111");
+
+            }
+
+            @Override
+            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+                Toast.makeText(MainActivity.this, "Balloon2:" + mapPOIItem.getTag(), Toast.LENGTH_SHORT).show();
+                Logger.d("2222222222");
+            }
+
+            @Override
+            public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
+            }
+        });
 
         String lastUpdated = DatabaseManager.getInstance().getPreference(DatabaseManager.PREF_LAST_UPDATED, "0");
 
@@ -61,6 +86,7 @@ public class MainActivity extends Activity {
 
     private void refreshMarkers(List<Atm> list) {
         mapView.removePOIItems(atmPois);
+        mCurrentAtmList = list;
 
         if(list.size() > 0) {
             for(int i=0;i<list.size();i++) {
@@ -70,10 +96,13 @@ public class MainActivity extends Activity {
                 Atm atm = list.get(i);
 
                 poi.setItemName(atm.name);
-                poi.setTag(0);
+                poi.setTag(i);
                 poi.setMapPoint(MapPoint.mapPointWithGeoCoord((double) atm.yE6 / 100_000f, (double) atm.xE6 / 100_000f));
-                poi.setMarkerType(MapPOIItem.MarkerType.BluePin);
-                poi.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+                poi.setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                poi.setCustomImageBitmap(MarkerManager.getInstance().getMarkerBitmap(atm.bankCode));
+                poi.setCustomImageAutoscale(false);
+                poi.setCustomImageAnchor(0.5f, 1.0f);
+
                 mapView.addPOIItem(poi);
             }
         }
@@ -158,6 +187,19 @@ public class MainActivity extends Activity {
         public void onComplete() {
             DatabaseManager.getInstance().setPreference(DatabaseManager.PREF_LAST_UPDATED, String.valueOf(System.currentTimeMillis()));
             progDlg.dismiss();
+        }
+    }
+
+    private class CustomCalloutBalloonAdapter implements CalloutBalloonAdapter {
+
+        @Override
+        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
+            return null;
+        }
+
+        @Override
+        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
+            return null;
         }
     }
 

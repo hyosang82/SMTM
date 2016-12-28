@@ -111,6 +111,22 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
 
+    public List<String> getBankCodes() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT code FROM bankinfo", null);
+        List<String> codes = new ArrayList<>();
+
+        try {
+            while(c.moveToNext()) {
+                codes.add(c.getString(c.getColumnIndex("code")));
+            }
+        }finally {
+            db.releaseReference();
+        }
+
+        return codes;
+    }
+
     public long insertOrUpdateAtm(Atm atm) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -154,7 +170,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 new String[]{
                         String.valueOf(left), String.valueOf(right),
                         String.valueOf(bottom), String.valueOf(top)
-                }, null, null, null, "20");
+                }, null, null, "RANDOM()", "20");
 
         while(c.moveToNext()) {
             list.add(toAtm(c));

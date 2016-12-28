@@ -1,18 +1,24 @@
 package kr.hyosang.smtm.android;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import kr.hyosang.smtm.android.common.Define;
 import kr.hyosang.smtm.android.common.Logger;
 import kr.hyosang.smtm.android.database.DatabaseManager;
 import kr.hyosang.smtm.common.Atm;
@@ -51,6 +57,8 @@ public class DatabaseUpdater extends AsyncTask<Void, Integer, Void> {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
                 DatabaseManager db = DatabaseManager.getInstance();
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReferenceFromUrl("gs://smtm-13000.appspot.com/marker");
 
                 while(iter.hasNext()) {
                     DataSnapshot data = iter.next();
@@ -67,6 +75,17 @@ public class DatabaseUpdater extends AsyncTask<Void, Integer, Void> {
                         if (rawid > 0) {
                             bankCodes.add(bank);
                         }
+
+                        String markerFile = bank.code + ".png";
+
+                        storageRef.child(markerFile).getFile(new File(Define.MARKER_PATH + "/" + markerFile))
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Logger.d("Marker downloaded: " + taskSnapshot.toString());
+                                }
+                            }
+                        );
                     }
                 }
 
@@ -110,7 +129,7 @@ public class DatabaseUpdater extends AsyncTask<Void, Integer, Void> {
 
                         long rowid = db.insertOrUpdateAtm(atm);
 
-                        Logger.d("Result=" + rowid + " :ATM: " + atm.toString());
+                        //Logger.d("Result=" + rowid + " :ATM: " + atm.toString());
 
                         count++;
 
